@@ -1,8 +1,18 @@
-#!/bin/bash
-echo "Start postflight script"
-echo $SCRIPT_NAME: launching html help
-open "/Library/Input Methods/Yahoo! KeyKey.app/Contents/SharedSupport/InstallerHelp.app"
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "End postflight script"
+APP_PATH="/Library/Input Methods/Yahoo! KeyKey.app"
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
 
+echo "Yahoo! KeyKey postinstall: refreshing input method registration"
+
+/usr/bin/pkill -x "Yahoo! KeyKey" >/dev/null 2>&1 || true
+
+if [[ -x "$LSREGISTER" && -d "$APP_PATH" ]]; then
+  "$LSREGISTER" -f "$APP_PATH" >/dev/null 2>&1 || true
+fi
+
+/usr/bin/killall cfprefsd >/dev/null 2>&1 || true
+
+echo "Yahoo! KeyKey postinstall: installed. Restart or log out/in if the input source does not appear immediately."
 exit 0

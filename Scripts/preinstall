@@ -1,4 +1,17 @@
-#!/bin/bash
-echo "Start preflight script"
-echo "End preflight script"
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Yahoo! KeyKey preinstall: checking runtime compatibility"
+
+if [[ "$(uname -m)" == "arm64" ]]; then
+  if ! /usr/bin/arch -x86_64 /usr/bin/true >/dev/null 2>&1; then
+    echo "Yahoo! KeyKey preinstall: Apple Silicon requires Rosetta for this x86_64 compatibility build"
+    if ! /usr/sbin/softwareupdate --install-rosetta --agree-to-license; then
+      echo "Yahoo! KeyKey preinstall: Rosetta installation failed"
+      exit 1
+    fi
+  fi
+fi
+
+echo "Yahoo! KeyKey preinstall: OK"
 exit 0
